@@ -1,0 +1,21 @@
+{
+  "name": "FitTrack AI",
+  "short_name": "FitTrack",
+  "description": "Your intelligent fitness companion.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F5F0",
+  "theme_color": "#5A5A40",
+  "icons": [
+    {
+      "src": "https://picsum.photos/seed/fittrack/192/192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://picsum.photos/seed/fittrack/512/512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

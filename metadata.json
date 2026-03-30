@@ -1,0 +1,8 @@
+{
+  "name": "FitTrack AI",
+  "description": "A comprehensive workout and calorie tracker with AI-powered food analysis and progress visualization.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User's physical attributes and goals",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "gender": { "type": "string", "enum": ["male", "female", "other"] },
+        "height": { "type": "number", "description": "Height in cm" },
+        "weight": { "type": "number", "description": "Current weight in kg" },
+        "targetWeight": { "type": "number", "description": "Target weight in kg" },
+        "birthDate": { "type": "string", "format": "date" },
+        "dailyCalorieGoal": { "type": "number", "default": 1500 }
+      },
+      "required": ["uid", "gender", "height", "weight"]
+    },
+    "DailyLog": {
+      "title": "Daily Log",
+      "description": "Daily tracking of weight and calories",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "weight": { "type": "number" },
+        "caloriesIn": { "type": "number", "default": 0 },
+        "caloriesOut": { "type": "number", "default": 0 },
+        "foodLogs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "calories": { "type": "number" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      },
+      "required": ["uid", "date"]
+    },
+    "Workout": {
+      "title": "Workout",
+      "description": "A single workout session",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "type": { "type": "string", "enum": ["strength", "cardio", "mixed"] },
+        "duration": { "type": "number", "description": "Duration in minutes" },
+        "caloriesBurned": { "type": "number" },
+        "exercises": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "sets": { "type": "number" },
+              "reps": { "type": "number" },
+              "weight": { "type": "number" },
+              "distance": { "type": "number" },
+              "unit": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["uid", "date", "type"]
+    }
+  },
+  "firestore": {
+    "profiles/{uid}": {
+      "schema": "UserProfile",
+      "description": "User profile data"
+    },
+    "daily_logs/{logId}": {
+      "schema": "DailyLog",
+      "description": "Daily tracking logs (logId is uid_date)"
+    },
+    "workouts/{workoutId}": {
+      "schema": "Workout",
+      "description": "Workout sessions"
+    }
+  }
+}

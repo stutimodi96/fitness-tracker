@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.uid;
+    }
+
+    function isValidUserProfile(data) {
+      return data.uid == request.auth.uid &&
+             data.gender in ['male', 'female', 'other'] &&
+             data.height is number && data.height > 0 &&
+             data.weight is number && data.weight > 0;
+    }
+
+    function isValidDailyLog(data) {
+      return data.uid == request.auth.uid &&
+             data.date is string &&
+             (data.weight == null || data.weight is number) &&
+             data.caloriesIn is number &&
+             data.caloriesOut is number;
+    }
+
+    function isValidWorkout(data) {
+      return data.uid == request.auth.uid &&
+             data.date is string &&
+             data.type in ['strength', 'cardio', 'mixed'];
+    }
+
+    // Profiles
+    match /profiles/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidUserProfile(request.resource.data);
+      allow update: if isOwner(uid) && isValidUserProfile(request.resource.data);
+    }
+
+    // Daily Logs
+    match /daily_logs/{logId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.uid == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid && isValidDailyLog(request.resource.data);
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid && isValidDailyLog(request.resource.data);
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+
+    // Workouts
+    match /workouts/{workoutId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.uid == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid && isValidWorkout(request.resource.data);
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid && isValidWorkout(request.resource.data);
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+  }
+}
